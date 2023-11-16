@@ -2,7 +2,7 @@
 /*
 Plugin Name: Umami Stats Display
 Description: Display Umami analytics stats on your WordPress site.
-Version: 1.8
+Version: 1.9
 Author: obaby
 Author URI: https://www.h4ck.org.cn
 Site: https://nai.dog
@@ -10,7 +10,7 @@ Site: https://nai.dog
 
 // Function to retrieve Umami API token
 function get_umami_api_token() {
-    $umami_api_url = 'https://c.oba.by/api/auth/login';
+    $umami_api_url = get_option('umami_website_url').'api/auth/login'; //https://c.oba.by/
     
     $username = get_option('umami_username');
     $password = get_option('umami_password');
@@ -44,7 +44,7 @@ function get_umami_api_token() {
 function get_umami_stats() {
     $currentTimestamp = round(microtime(true) * 1000);
     $startDate = round((microtime(true) -86400*20)* 1000);
-    $umami_api_url = 'https://c.oba.by/api/websites/' . get_option('umami_website_id').'/pageviews?unit=day&startAt='.$startDate.'&endAt='.$currentTimestamp;
+    $umami_api_url = get_option('umami_website_url').'api/websites/' . get_option('umami_website_id').'/pageviews?unit=day&startAt='.$startDate.'&endAt='.$currentTimestamp;
     // echo $umami_api_url;
     $token = get_umami_api_token();
     
@@ -175,6 +175,7 @@ function umami_stats_register_settings() {
     register_setting('umami_stats_options', 'umami_username');
     register_setting('umami_stats_options', 'umami_password');
     register_setting('umami_stats_options', 'umami_website_id');
+    register_setting('umami_stats_options', 'umami_website_url');
     
     add_settings_section(
         'umami_stats_section',
@@ -204,13 +205,20 @@ function umami_stats_register_settings() {
         'Website ID',
         'umami_website_id_callback',
         'umami_stats_options',
-        'umami_stats_section'
+        'umami_stats_section',
+    );
+    add_settings_field(
+        'umami_website_url',
+        'Website Url',
+        'umami_website_url_callback',
+        'umami_stats_options',
+        'umami_stats_section',
     );
 }
 
 // Callback function for Umami API settings section
 function umami_stats_section_callback() {
-    echo '<p>Enter your Umami API username, password, and website ID below:</p>';
+    echo '<p>Enter your Umami Website Url, API username, password, and website ID below:</p>';
 }
 
 // Callback function for Username field
@@ -229,6 +237,11 @@ function umami_password_callback() {
 function umami_website_id_callback() {
     $website_id = get_option('umami_website_id');
     echo '<input type="text" name="umami_website_id" value="' . esc_attr($website_id) . '" />';
+}
+
+function umami_website_url_callback() {
+    $website_url = get_option('umami_website_url');
+    echo '<input type="text" name="umami_website_url" value="' . esc_attr($website_url) . '" />';
 }
 
 // Hook to add Umami stats dashboard widget
