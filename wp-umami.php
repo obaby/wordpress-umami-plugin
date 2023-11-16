@@ -92,7 +92,7 @@ function umami_stats_dashboard_widget_content() {
     echo '<canvas id="umamiChart" width="400" height="200"></canvas>';
     
     // Enqueue Chart.js library
-    wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js');
+    wp_enqueue_script('chart-js', 'https://fastly.jsdelivr.net/npm/chart.js');
     
     // 将 JSON 数据解码为关联数组
     // $dataArray = json_decode($jsonData, true);
